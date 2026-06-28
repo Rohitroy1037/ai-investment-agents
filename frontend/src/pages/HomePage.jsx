@@ -145,7 +145,7 @@ const HomePage = () => {
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
           >
             {/* Results header + Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-12 animate-fade-in-up">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 animate-fade-in-up">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">
                   Research Results
@@ -164,25 +164,25 @@ const HomePage = () => {
               />
             </div>
 
-            {/* Cards grid */}
-            <div className="space-y-6">
-              {/* Row 1: Company Overview */}
+            {/* Cards grid — consistent gap throughout */}
+            <div className="space-y-8">
+              {/* Row 1: Company Overview (full width) */}
               <CompanyCard data={results.companyOverview} />
 
-              {/* Row 2: Financial Metrics with Charts */}
+              {/* Row 2: Financial Metrics (full width) */}
               <FinancialCard data={results.financialMetrics} />
 
-              {/* Row 3: News + SWOT */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Row 3: News + SWOT (equal two columns) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <NewsCard data={results.latestNews} />
                 <SWOTCard data={results.swotAnalysis} />
               </div>
 
-              {/* Row 4: Extras — AI Deep Dive */}
+              {/* Row 4: Extras — AI Deep Dive (full width) */}
               {results.extras && <ExtrasCard data={results.extras} />}
 
-              {/* Row 5: Score + Recommendation */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Row 5: Score + Recommendation (1/3 + 2/3) */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
                   <ScoreCard data={results.investmentScore} />
                 </div>

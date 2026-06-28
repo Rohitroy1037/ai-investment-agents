@@ -129,8 +129,8 @@ body {
 .card {
   background: linear-gradient(145deg, #1e293b, #111827);
   border: 1px solid #1e293b;
-  border-radius: 16px;
-  padding: 28px;
+  border-radius: 20px;
+  padding: 32px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
