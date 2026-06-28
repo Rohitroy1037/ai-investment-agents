@@ -112,7 +112,7 @@ const HomePage = () => {
 
         {/* Loading State — Skeleton Loaders */}
         {isLoading && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <section className="w-full max-w-4xl mx-auto px-6 sm:px-8 lg:px-10">
             <Loader />
           </section>
         )}
@@ -142,7 +142,7 @@ const HomePage = () => {
         {results && !isLoading && (
           <section
             ref={resultsRef}
-            className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+            className="w-full max-w-4xl mx-auto px-6 sm:px-8 lg:px-10 py-16"
           >
             {/* Results header + Action Buttons */}
             <div className="text-center mb-10 animate-fade-in-up">
