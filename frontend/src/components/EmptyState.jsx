@@ -1,16 +1,29 @@
-import { FiSearch } from "react-icons/fi";
 import { RiRobot2Fill } from "react-icons/ri";
+import { HiSparkles } from "react-icons/hi2";
 
 /**
  * EmptyState — Shown when no search has been performed yet (below the hero).
+ * Matches the target design with robot icon on left, sparkle on right.
  */
 const EmptyState = () => {
   return (
-    <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="text-center animate-fade-in-up">
-        {/* Icon */}
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-blue-500/10 flex items-center justify-center mx-auto mb-6">
-          <RiRobot2Fill className="text-blue-400/60 text-3xl" />
+    <section className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative flex flex-col items-center text-center animate-fade-in-up">
+        {/* Robot icon - positioned to the left on larger screens */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden lg:block">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-700/40 to-slate-800/40 border border-slate-700/30 flex items-center justify-center shadow-lg">
+            <RiRobot2Fill className="text-slate-400 text-2xl" />
+          </div>
+        </div>
+
+        {/* Sparkle icon - positioned to the right on larger screens */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden lg:block">
+          <HiSparkles className="text-slate-600 text-3xl" />
+        </div>
+
+        {/* Mobile robot icon */}
+        <div className="lg:hidden w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-700/40 to-slate-800/40 border border-slate-700/30 flex items-center justify-center shadow-lg mb-4">
+          <RiRobot2Fill className="text-slate-400 text-2xl" />
         </div>
 
         {/* Title */}
@@ -19,29 +32,11 @@ const EmptyState = () => {
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-slate-500 max-w-md mx-auto mb-8 leading-relaxed">
+        <p className="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
           Enter a company name above to receive a comprehensive AI-powered
           investment analysis with financial metrics, SWOT breakdown, and a clear
           recommendation.
         </p>
-
-        {/* Feature pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {[
-            "Yahoo Finance",
-            "NewsAPI",
-            "LangChain AI",
-            "SWOT Analysis",
-            "Risk Assessment",
-          ].map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-800/50 text-slate-400 border border-slate-700/50"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );

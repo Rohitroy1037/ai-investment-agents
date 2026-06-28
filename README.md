@@ -1,24 +1,65 @@
 # AI Investment Research Agent
 
-A full-stack, production-ready AI investment analyst powered by LangChain.js, Grok (xAI), Express.js, and React.
+A full-stack, production-ready AI investment analyst powered by LangChain.js, Groq (Llama 3.1), Express.js, and React.
 
-This application accepts a company name, parallel-fetches real-time financial metrics from Yahoo Finance and recent articles from NewsAPI, builds a comprehensive context, and uses a LangChain orchestration layer to instruct Grok to perform a deep-dive analysis, returning a structured JSON response rendered in a highly polished React Dashboard.
+## Overview
+This application accepts a company name, parallel-fetches real-time financial metrics from Yahoo Finance and recent articles from NewsAPI, builds a comprehensive context, and uses a LangChain orchestration layer to instruct a Large Language Model (Groq / Llama 3) to perform a deep-dive analysis. It returns a structured JSON response which is beautifully rendered in a highly polished React Dashboard.
 
-## Features
+## How to Run It
 
-- **LangChain AI Orchestration**: Modular, sequential tool execution using Zod schemas and `@langchain/openai` configured for xAI.
-- **Production Backend**: Helmet security headers, GZIP compression, Morgan structured logging, and strict rate-limiting.
-- **Resilient Tooling**: 5-minute memory caching (`node-cache`) to preserve API quotas and `axios-retry` for robust external fetching.
-- **Polished Dashboard**: Dark/Light mode, animated skeleton loaders, empty states, and toast notifications.
-- **Data Visualization**: Integrated `recharts` for financial bar charts and an animated investment score gauge.
-- **Action Buttons**: Export the entire analysis as a PDF, print, copy to clipboard, or share natively.
-- **Search History**: Persistent local-storage search history for rapid re-analysis.
-- **Full Test Coverage**: Jest and Supertest integration for API reliability testing.
+### Prerequisites
+- Node.js v18+
+- [Groq API Key](https://console.groq.com/)
+- [NewsAPI Key](https://newsapi.org/) (Optional, falls back if omitted)
 
----
+### 1. Setup
+```bash
+# Clone the repository
+git clone https://github.com/Rohitroy1037/ai-investment-agents.git
+cd ai-investment-agents
 
-## Architecture
+# Install frontend
+cd frontend
+npm install
+cd ..
 
+# Install backend
+cd backend
+npm install
+cd ..
+```
+
+### 2. Configure Environment
+Create a `.env` file in the `backend/` directory:
+```env
+PORT=5000
+NODE_ENV=development
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+NEWS_API_KEY=your_newsapi_key_here
+```
+Create a `.env` file in the `frontend/` directory (optional for local):
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+### 3. Run Locally
+Start both servers simultaneously in separate terminals:
+
+**Terminal 1: Backend**
+```bash
+cd backend
+npm run dev
+```
+
+**Terminal 2: Frontend**
+```bash
+cd frontend
+npm run dev
+```
+Navigate to `http://localhost:5173`.
+
+## How it works (Architecture)
 ```text
 React Frontend
         │
@@ -36,133 +77,46 @@ Finance Tool   News Tool
            ▼
      Combined Context
            ▼
-      Grok API (xAI)
+      Groq API (Llama 3)
            ▼
  Investment Recommendation
            ▼
- React Dashboard
+  React Dashboard
 ```
+1. **React Frontend**: Captures the search query and renders data beautifully using Tailwind CSS and Recharts.
+2. **Express Backend**: Acts as a proxy and orchestrator to keep API keys secure. 
+3. **LangChain Orchestration**: The backend uses `@langchain/groq` to instantiate a chat model. It executes two Tools in parallel: `financeTool.js` (using `yahoo-finance2`) and `newsTool.js` (using NewsAPI).
+4. **Structured Output**: The context is fed to Groq with a strict Zod `outputSchema`. The LLM generates a JSON response.
+5. **Caching & Resilience**: The backend utilizes `node-cache` to cache Yahoo Finance results for 5 minutes, preventing rate limits.
 
-## Project Structure
+## Key Decisions & Trade-offs
+- **Model Choice (Groq / Llama 3.1)**: Initially attempted to use xAI (Grok), but due to lack of API credits, pivoted to Groq. Groq provides incredibly fast inference which is perfect for real-time agentic research.
+- **Yahoo Finance vs. Premium APIs**: Chose `yahoo-finance2` for scraping real-time data instead of relying on paid APIs like AlphaVantage or Finnhub. *Trade-off*: Yahoo Finance data can be unstable or lack fields (like `CEO` and `Founded Date`). 
+- **AI-Generated Fallbacks**: Since Yahoo Finance failed to provide the CEO and Founded year for some companies, I modified the Zod schema to force the LLM to research and generate these fields from its own training data, while leaving the volatile stock numbers to the real-time API.
+- **Separation of Concerns**: Kept the frontend entirely decoupled from Langchain. The backend handles all the heavy lifting, meaning the frontend can be hosted on a static provider like Vercel, while the backend runs on Render.
 
-```text
-ai-investment-agent/
-│
-├── frontend/                 # React + Vite frontend
-│   ├── src/                  # Components, pages, services
-│   ├── public/               # Static assets
-│   ├── package.json          # Frontend dependencies
-│   └── vercel.json           # Vercel deployment config
-│
-├── backend/                  # Node.js + Express backend
-│   ├── controllers/          # API route handlers
-│   ├── services/             # LangChain agents & tools
-│   ├── package.json          # Backend dependencies
-│   └── render.yaml           # Render deployment blueprint
-│
-├── README.md                 # Project documentation
-└── .gitignore
-```
+## Example Runs
+- **Tesla (TSLA)**:
+  - CEO: Elon Musk (Generated by AI fallback)
+  - Investment Score: Typically 75-85 depending on real-time news.
+  - Reason: Strong EV dominance, but highly volatile P/E ratios and unpredictable news cycles.
+- **Apple (AAPL)**:
+  - CEO: Tim Cook (Generated by AI fallback)
+  - Founded: 1976 (Generated by AI fallback)
+  - Investment Score: ~85
+  - Reason: Strong balance sheet, massive cash reserves, though slower smartphone growth.
+- **Google (GOOGL)**:
+  - CEO: Sundar Pichai
+  - Founded: 1998
+  - Investment Score: ~90
+  - Reason: Dominant ad revenue, AI pipeline (Gemini).
+
+## What I would improve with more time
+- **Websockets**: Instead of waiting 10-15 seconds for the LLM to finish thinking, stream the LangChain agent's thoughts to the UI in real-time ("Agent is fetching news...", "Agent is analyzing P/E ratio...").
+- **Authentication & Database**: Add Clerk and PostgreSQL (Prisma) to save portfolios permanently instead of using LocalStorage.
+- **More Diverse Tools**: Give the LangChain agent access to an SEC Filings Tool (Edgar API) to read actual 10-K reports.
 
 ---
-
-## Installation & Setup
-
-### Prerequisites
-- Node.js v18+
-- [xAI API Key](https://console.x.ai/) (Requires active billing credits)
-- [NewsAPI Key](https://newsapi.org/) (Optional, falls back if omitted)
-
-### 1. Clone & Install
-```bash
-# Install frontend
-cd frontend
-npm install
-cd ..
-
-# Install backend
-cd backend
-npm install
-cd ..
-```
-
-### 2. Configure Environment
-Create a `.env` file in the `backend/` directory:
-```env
-PORT=5000
-NODE_ENV=development
-GROQ_API_KEY=your_xai_api_key_here
-GROQ_BASE_URL=https://api.x.ai/v1
-NEWS_API_KEY=your_newsapi_key_here
-```
-
-### 3. Run Locally
-Start both servers simultaneously in separate terminals:
-```bash
-# Terminal 1: Backend
-cd backend
-npm run dev
-
-# Terminal 2: Frontend
-cd frontend
-npm run dev
-```
-Navigate to `http://localhost:5173`.
-
----
-
-## Deployment
-
-This repository is pre-configured for modern serverless and PaaS deployment.
-
-### Frontend (Vercel)
-1. Import the repository to Vercel.
-2. Vercel will automatically detect Vite and use `vercel.json` for SPA routing.
-
-### Backend (Render)
-1. Connect the repository to Render.
-2. The included `render.yaml` Blueprint will automatically provision the Node web service.
-3. Ensure you add `GROQ_API_KEY` and `NEWS_API_KEY` to the Render environment variables dashboard.
-
----
-
-## API Documentation
-
-### `POST /api/invest`
-Analyzes a company and returns a structured AI recommendation.
-
-**Request Body:**
-```json
-{
-  "company": "Apple"
-}
-```
-
-**Response (Success):**
-```json
-{
-  "success": true,
-  "data": {
-    "company": "Apple Inc.",
-    "overview": "...",
-    "investmentScore": 85,
-    "recommendation": "INVEST",
-    "confidence": "90%",
-    "reason": "Strong balance sheet...",
-    "financialMetrics": { ... },
-    "latestNews": [ ... ],
-    "extras": { ... }
-  }
-}
-```
-
----
-
-## Known Limitations
-- **xAI Billing:** If your xAI account does not have credits, the API will reject the prompt with a `400` or `403` error. The UI gracefully handles this with a Toast notification and Error Screen.
-- **NewsAPI Limitations:** Free-tier NewsAPI limits requests and delays indexing. Caching mitigates this.
-
-## Future Improvements
-- **Websockets**: Stream the LangChain agent's thoughts to the UI in real-time.
+**BONUS**: The entire LLM chat session transcript detailing the thought process, debugging, and architecture pivots has been included in the root directory as `transcript_full.jsonl`.angChain agent's thoughts to the UI in real-time.
 - **Authentication**: Add Clerk to save portfolios.
 - **Database**: Add PostgreSQL (Prisma) to persist historical analysis data permanently.

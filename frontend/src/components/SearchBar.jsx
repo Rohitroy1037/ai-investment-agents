@@ -23,7 +23,7 @@ const SearchBar = ({ onSearch, isLoading }) => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter company name..."
+            placeholder="Apple Inc. (AAPL)"
             disabled={isLoading}
             className="flex-1 bg-transparent px-4 py-4 sm:py-5 text-slate-100 text-sm sm:text-base placeholder-slate-500 outline-none disabled:opacity-50"
           />
