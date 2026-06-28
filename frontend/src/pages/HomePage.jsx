@@ -142,26 +142,26 @@ const HomePage = () => {
         {results && !isLoading && (
           <section
             ref={resultsRef}
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+            className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
           >
             {/* Results header + Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 animate-fade-in-up">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">
-                  Research Results
-                </h2>
-                <p className="text-slate-500 text-sm">
-                  AI analysis for{" "}
-                  <span className="text-blue-400 font-medium">
-                    {searchedCompany}
-                  </span>
-                </p>
+            <div className="text-center mb-10 animate-fade-in-up">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">
+                Research Results
+              </h2>
+              <p className="text-slate-500 text-sm mb-4">
+                AI analysis for{" "}
+                <span className="text-blue-400 font-medium">
+                  {searchedCompany}
+                </span>
+              </p>
+              <div className="flex justify-center">
+                <ActionButtons
+                  resultsRef={resultsRef}
+                  companyName={searchedCompany}
+                  rawData={results}
+                />
               </div>
-              <ActionButtons
-                resultsRef={resultsRef}
-                companyName={searchedCompany}
-                rawData={results}
-              />
             </div>
 
             {/* Cards grid — consistent gap throughout */}
